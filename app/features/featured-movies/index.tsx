@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Poster } from './Poster';
 import { ScrollView, StyleSheet, Text, View, Dimensions } from 'react-native';
-import movieData from '../../../server/data/movies.json';
+import { getFeaturedMoviesQuery } from '@/infrastructure/repositories/movie';
 
 type Props = {
   style?: object;
@@ -21,7 +21,14 @@ export function FeaturedMovies({ style }: Props): JSX.Element {
   const [movies, setMovies] = useState<Movie[]>([]);
 
   useEffect(() => {
-    setMovies(movieData.movies.slice(0, 10));
+    const fetchFeaturedMovies = async () => {
+      const featuredMovies = await getFeaturedMoviesQuery(
+        new AbortController().signal,
+      );
+      setMovies(featuredMovies);
+    };
+
+    fetchFeaturedMovies();
   }, []);
 
   return (

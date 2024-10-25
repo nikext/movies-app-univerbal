@@ -33,11 +33,20 @@ export async function getMovieByIdQuery(
   return (await request.json()) as Movie;
 }
 
-// TODO: implement
 export async function getFeaturedMoviesQuery(
   signal: AbortSignal,
 ): Promise<Movie[]> {
-  return [];
+  try {
+    const url = new URL('/movies', apiUrl);
+    const request = await fetch(url, { signal });
+    if (!request.ok) return [];
+
+    const json = await request.json();
+    return json as Movie[];
+  } catch (err) {
+    console.error('Error fetching featured movies:', err);
+    return [];
+  }
 }
 
 export async function getTopRatedMoviesQuery(): Promise<Movie[]> {
