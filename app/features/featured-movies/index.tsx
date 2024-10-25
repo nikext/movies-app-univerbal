@@ -63,7 +63,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 16,
     marginLeft: 16,
-    color: '#34495e',
   },
   list: {
     paddingLeft: 16,

@@ -41,7 +41,7 @@ export async function getTvSeriesByIdQuery(
 }
 
 export async function getFeaturedTvSeriesQuery(): Promise<TVSeries[]> {
-  const url = new URL('/tv-series/recommended', apiUrl);
+  const url = new URL('/tv-series', apiUrl);
   console.log(url);
 
   try {
@@ -53,7 +53,10 @@ export async function getFeaturedTvSeriesQuery(): Promise<TVSeries[]> {
 
     if (!request.ok) throw new Error('Network response was not ok');
 
-    return await request.json();
+    const allSeries: TVSeries[] = await request.json();
+
+    // Shuffle the array and return the first 15 items
+    return shuffleArray(allSeries).slice(0, 15);
   } catch (error) {
     console.error('Error fetching featured TV series:', error);
     return [];
@@ -70,4 +73,14 @@ export async function getTopRatedTvSeriesQuery(): Promise<TVSeries[]> {
 
   // top rated has to have a rating above 75%
   return json.filter((it) => it.rating > 75);
+}
+
+// Helper function to shuffle an array
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
 }

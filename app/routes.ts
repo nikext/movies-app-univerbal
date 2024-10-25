@@ -1,9 +1,9 @@
 export const appRouteNames = {
-  root: 'tab-home',
-  topRated: 'tab-top-rated',
-  favorites: 'tab-favorites',
-  favoritesMovies: 'favorites-movies',
-  favoritesTvSeries: 'favorites-tv-series',
-  movie: 'movie',
-  tvSeries: 'tv-series',
+  root: 'Home',
+  topRated: 'Top Rated',
+  favorites: 'Favorites',
+  favoritesMovies: 'Favorites Movies',
+  favoritesTvSeries: 'Favorites TV Series',
+  movie: 'Movie',
+  tvSeries: 'TV Series',
 };
