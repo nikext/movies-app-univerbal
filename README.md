@@ -72,11 +72,11 @@ Don't forget to give us access to the repository by either making it public or i
 
 ## Refactoring
 
-- [ ] The codebase is inconsistent and should be cleaned up
+- [x] The codebase is inconsistent and should be cleaned up
 - [ ] There should be no visible type errors
 - [ ] The linter should not show errors
 - [ ] The linter should not show warnings
-- [ ] Some files are implemented in javascript - convert them to typescript
-- [ ] Handle network errors gracefully
+- [x] Some files are implemented in javascript - convert them to typescript
+- [x] Handle network errors gracefully
 - [ ] Write some unit tests
 - [ ] Write some integration tests

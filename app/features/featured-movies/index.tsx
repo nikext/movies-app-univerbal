@@ -2,12 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { Poster } from './Poster';
 import { ScrollView, StyleSheet, Text, View, Dimensions } from 'react-native';
 import { getFeaturedMoviesQuery } from '@/infrastructure/repositories/movie';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '@/navigation/AppNavigator';
 
 type Props = {
   style?: object;
 };
 
-type Movie = {
+export type Movie = {
   id: string;
   title: string;
   director: string;
@@ -17,8 +20,17 @@ type Movie = {
   posterUrl?: string;
 };
 
+// Add this type definition for the navigation prop
+// type RootStackParamList = {
+//   MovieDetails: { movie: Movie };
+//   // Add other screen names and their params here
+// };
+
+type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
+
 export function FeaturedMovies({ style }: Props): JSX.Element {
   const [movies, setMovies] = useState<Movie[]>([]);
+  const navigation = useNavigation<NavigationProp>();
 
   useEffect(() => {
     const fetchFeaturedMovies = async () => {
@@ -30,6 +42,10 @@ export function FeaturedMovies({ style }: Props): JSX.Element {
 
     fetchFeaturedMovies();
   }, []);
+
+  const handleMoviePress = (movie: Movie) => {
+    navigation.navigate('MovieDetails', { movie });
+  };
 
   return (
     <View style={[styles.root, style]}>
@@ -43,7 +59,7 @@ export function FeaturedMovies({ style }: Props): JSX.Element {
           <Poster
             key={movie.id}
             movie={movie}
-            onPress={() => {}} // Implement navigation to movie details if needed
+            onPress={() => handleMoviePress(movie)}
             style={styles.poster}
           />
         ))}
