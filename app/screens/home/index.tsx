@@ -7,7 +7,7 @@ import { View } from 'react-native';
 export default function HomeScreen(): ReactNode {
   return (
     <View style={{ backgroundColor: 'gray' }}>
-      <View style={{ marginBottom: 40 }}>
+      <View style={{ flex: 1, marginBottom: 66, zIndex: 500 }}>
         <Search />
       </View>
 

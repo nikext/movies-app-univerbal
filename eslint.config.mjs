@@ -11,13 +11,7 @@ const importRulesConfig = {
   rules: {
     ...importPlugin.configs.rules,
     'import/no-unresolved': 'off', // check done by typescript
-    'import/order': [
-      'warn',
-      {
-        'newlines-between': 'always',
-        alphabetize: { order: 'asc', caseInsensitive: true },
-      },
-    ],
+    'import/order': 'off',
     'import/no-default-export': 'warn',
   },
 };

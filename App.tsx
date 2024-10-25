@@ -33,11 +33,11 @@ export default function App() {
           tabBarIcon: ({ focused, color, size }) => {
             let iconName: keyof typeof Ionicons.glyphMap;
 
-            if (route.name === 'tab-home') {
+            if (route.name === appRouteNames.root) {
               iconName = focused ? 'home' : 'home-outline';
-            } else if (route.name === 'tab-top-rated') {
+            } else if (route.name === appRouteNames.topRated) {
               iconName = focused ? 'star' : 'star-outline';
-            } else if (route.name === 'tab-favorites') {
+            } else if (route.name === appRouteNames.favorites) {
               iconName = focused ? 'heart' : 'heart-outline';
             } else {
               iconName = 'help-outline'; // Default icon
@@ -45,22 +45,19 @@ export default function App() {
 
             return <Ionicons name={iconName} size={size} color={color} />;
           },
+          tabBarLabel: () => {
+            if (route.name === appRouteNames.root) return 'Home';
+            if (route.name === appRouteNames.topRated) return 'Top Rated';
+            if (route.name === appRouteNames.favorites) return 'Favorites';
+            return '';
+          },
         })}
       >
+        <Tab.Screen name={appRouteNames.root} component={HomeScreen} />
+        <Tab.Screen name={appRouteNames.topRated} component={TopRatedScreen} />
         <Tab.Screen
-          name="tab-home"
-          component={HomeScreen}
-          options={{ tabBarLabel: 'Home' }}
-        />
-        <Tab.Screen
-          name="tab-top-rated"
-          component={TopRatedScreen}
-          options={{ tabBarLabel: 'Top Rated' }}
-        />
-        <Tab.Screen
-          name="tab-favorites"
+          name={appRouteNames.favorites}
           component={FavoritesScreen}
-          options={{ tabBarLabel: 'Favorites' }}
         />
       </Tab.Navigator>
     </NavigationContainer>

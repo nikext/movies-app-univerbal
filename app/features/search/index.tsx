@@ -1,4 +1,4 @@
-import React, { ReactNode, useRef } from 'react';
+import React, { ReactNode, useRef, useState, useEffect } from 'react';
 import {
   StyleProp,
   StyleSheet,
@@ -6,10 +6,30 @@ import {
   View,
   ViewStyle,
   Text,
+  TouchableOpacity,
+  SafeAreaView,
+  Dimensions,
 } from 'react-native';
-import { inputValue$, suggestions$ } from './state';
-import { useAtom, useAtomValue } from 'jotai';
-import { loadable } from 'jotai/utils';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import movieData from '../../../server/data/movies.json';
+import Icon from 'react-native-vector-icons/Ionicons';
+
+// Define your RootStackParamList
+type RootStackParamList = {
+  DetailScreen: { item: Movie };
+  // Add other screens here
+};
+
+// Define the Movie type based on the data structure
+type Movie = {
+  id: string;
+  title: string;
+  director: string;
+  releaseYear: number;
+  genres: string[];
+  rating: number;
+};
 
 export type SearchProps = {
   style?: StyleProp<ViewStyle>;
@@ -17,48 +37,151 @@ export type SearchProps = {
 
 export function Search({ style }: SearchProps): ReactNode {
   const inputRef = useRef<TextInput>(null);
-  const [inputValue, setInputValue] = useAtom(inputValue$);
-  const suggestions = useAtomValue(loadable(suggestions$));
+  const [inputValue, setInputValue] = useState('');
+  const [movies, setMovies] = useState<Movie[]>([]);
+  const [filteredMovies, setFilteredMovies] = useState<Movie[]>([]);
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
+  useEffect(() => {
+    // Set movies from the imported JSON data
+    setMovies(movieData.movies);
+  }, []);
+
+  const handleSearch = (text: string) => {
+    setInputValue(text);
+    if (text) {
+      const filtered = movies.filter((movie) =>
+        movie.title.toLowerCase().includes(text.toLowerCase()),
+      );
+      setFilteredMovies(filtered);
+    } else {
+      setFilteredMovies([]);
+    }
+  };
+
+  const handleSuggestionPress = (item: Movie) => {
+    navigation.navigate('DetailScreen', { item });
+  };
+
+  const renderSuggestions = () => {
+    if (inputValue && filteredMovies.length === 0) {
+      return <Text style={searchStyles.noResultsText}>No results found</Text>;
+    }
+    return filteredMovies.map((movie) => (
+      <TouchableOpacity
+        key={movie.id}
+        style={searchStyles.suggestionEntry}
+        onPress={() => handleSuggestionPress(movie)}
+      >
+        <Text style={{ color: '#34495e', fontSize: 16 }}>{movie.title}</Text>
+        <Text style={{ color: '#7f8c8d', fontSize: 14, marginTop: 4 }}>
+          {movie.releaseYear} • {movie.director}
+        </Text>
+      </TouchableOpacity>
+    ));
+  };
 
   return (
-    <View style={[searchStyles.root, style]}>
-      <TextInput
-        ref={inputRef}
-        style={{ height: 40, borderColor: 'red', borderWidth: 2 }}
-        placeholder="type to search..."
-        onChangeText={setInputValue}
-        value={inputValue}
-      />
+    <View style={[searchStyles.container, style]}>
+      <SafeAreaView>
+        <View style={searchStyles.searchContainer}>
+          <Icon
+            name="search"
+            size={20}
+            color="#7f8c8d"
+            style={searchStyles.searchIcon}
+          />
+          <TextInput
+            ref={inputRef}
+            style={searchStyles.input}
+            placeholder="Search movies..."
+            placeholderTextColor="#7f8c8d"
+            onChangeText={handleSearch}
+            value={inputValue}
+          />
+          {inputValue !== '' && (
+            <TouchableOpacity
+              onPress={() => handleSearch('')}
+              style={searchStyles.clearButton}
+            >
+              <Icon name="close-circle" size={20} color="#7f8c8d" />
+            </TouchableOpacity>
+          )}
+        </View>
+      </SafeAreaView>
 
-      {!inputValue ? null : (
-        <View style={searchStyles.suggestions}>
-          {suggestions.state !== 'hasData'
-            ? null
-            : suggestions.data.map((it) => (
-                <View style={searchStyles.suggestionEntry}>
-                  <Text>{it.title}</Text>
-                </View>
-              ))}
+      {inputValue && (
+        <View style={searchStyles.suggestionsWrapper}>
+          <View style={searchStyles.suggestions}>{renderSuggestions()}</View>
         </View>
       )}
     </View>
   );
 }
 
+const { height } = Dimensions.get('window');
+
 const searchStyles = StyleSheet.create({
-  root: {},
-
-  input: {},
-
-  suggestions: {
-    width: '100%',
-    bottom: 0,
-    left: 0,
+  container: {
     position: 'absolute',
-    backgroundColor: 'white',
-    borderWidth: 2,
-    borderColor: 'yellow',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 1000,
   },
-
-  suggestionEntry: {},
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
+    borderRadius: 25,
+    margin: 16,
+    paddingHorizontal: 16,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  searchIcon: {
+    marginRight: 10,
+  },
+  input: {
+    flex: 1,
+    height: 50,
+    fontSize: 16,
+    color: '#34495e',
+  },
+  clearButton: {
+    padding: 5,
+  },
+  suggestionsWrapper: {
+    position: 'absolute',
+    top: 66, // Adjust this value based on your layout
+    left: 16,
+    right: 16,
+    maxHeight: height - 100, // Adjust this value to control max height
+    zIndex: 1001,
+  },
+  suggestions: {
+    backgroundColor: '#ffffff',
+    borderRadius: 10,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    maxHeight: '100%',
+  },
+  suggestionEntry: {
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ecf0f1',
+  },
+  noResultsText: {
+    padding: 16,
+    fontStyle: 'italic',
+    color: '#7f8c8d',
+    textAlign: 'center',
+  },
 });
