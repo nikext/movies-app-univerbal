@@ -30,8 +30,8 @@ Don't forget to give us access to the repository by either making it public or i
 
 ## General
 
-- [ ] Running `npm start` does not start the app due to errors in the console
-- [ ] Bottom tab navigation does not display icons
+- [x] Running `npm start` does not start the app due to errors in the console
+- [x] Bottom tab navigation does not display icons
 - [ ] The app is not styled - make it pretty
 - [ ] The console should not display any warning nor errors in general
 
