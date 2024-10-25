@@ -1,7 +1,8 @@
 import { createAPIUrl } from '@/utils';
 import { Movie } from 'domain/movie';
 
-const apiUrl = createAPIUrl();
+// const apiUrl = createAPIUrl();
+const apiUrl = 'http://localhost:3003';
 
 export async function findMoviesMatchingQuery(
   signal: AbortSignal,

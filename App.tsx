@@ -11,26 +11,6 @@ import TopRatedScreen from '@/screens/top-rated';
 
 const Tab = createBottomTabNavigator();
 
-const envSchema = z.object({
-  EXPO_PUBLIC_SERVER_IP: z.string().ip().optional(),
-  EXPO_PUBLIC_SERVER_PORT: z.string().length(4).optional(),
-});
-
-const result = envSchema.safeParse(process.env);
-if (result.success) {
-  console.info('[app]: ENV', result.data);
-} else {
-  console.warn('[app]: ENV validation failed', result.error.flatten());
-}
-
-// Use default values if environment variables are not set or invalid
-const serverIP = result.success
-  ? result.data.EXPO_PUBLIC_SERVER_IP
-  : '127.0.0.1';
-const serverPort = result.success
-  ? result.data.EXPO_PUBLIC_SERVER_PORT
-  : '3003';
-
 export default function App() {
   return (
     <NavigationContainer>

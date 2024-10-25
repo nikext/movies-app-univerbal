@@ -2,7 +2,7 @@ import { createAPIUrl } from '@/utils';
 
 const apiUrl = createAPIUrl();
 
-export async function findTvSeriesMatchingQuery(params) {
+export async function findTvSeriesMatchingQuery(params: any) {
   const url = new URL('/tv-series', apiUrl);
 
   for (const [key, value] of Object.entries(params)) {

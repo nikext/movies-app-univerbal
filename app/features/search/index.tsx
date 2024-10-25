@@ -18,7 +18,7 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import movieData from '../../../server/data/movies.json';
+import { findMoviesMatchingQuery } from '../../infrastructure/repositories/movie';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { debounce } from 'lodash';
 
@@ -52,8 +52,20 @@ export function Search({ style }: SearchProps): ReactNode {
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
 
   useEffect(() => {
-    // Set movies from the imported JSON data
-    setMovies(movieData.movies);
+    const fetchMovies = async () => {
+      try {
+        const allMovies = await findMoviesMatchingQuery(
+          new AbortController().signal,
+          {},
+        );
+        setMovies(allMovies);
+      } catch (error) {
+        console.error('Error fetching movies:', error);
+        // Handle the error appropriately (e.g., show an error message to the user)
+      }
+    };
+
+    fetchMovies();
   }, []);
 
   // Create a debounced search function
