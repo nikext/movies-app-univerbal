@@ -51,9 +51,9 @@ Don't forget to give us access to the repository by either making it public or i
 
 ### Featured Tv Series
 
-- [ ] Enable the component. It's disabled as it can crash the home screen
+- [x] Enable the component. It's disabled as it can crash the home screen
 - [ ] Pressing on TV series should open the screen with TV series details
-- [ ] The rating is not displayed correctly
+- [x] The rating is not displayed correctly
 
 ## Movie and Tv Series screens (movie, tv-series)
 
