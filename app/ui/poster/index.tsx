@@ -13,6 +13,7 @@ type PosterProps = {
   onFavoritePress: () => void;
   isFavorite: boolean;
   styles?: StyleProp<ViewStyle>;
+  rating: number;
 };
 
 export function Poster(props: PosterProps) {

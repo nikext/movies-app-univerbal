@@ -46,7 +46,7 @@ Don't forget to give us access to the repository by either making it public or i
 
 ### Featured Movies
 
-- [ ] The component does not fetch data
+- [x] The component does not fetch data
 - [ ] Pressing on movie should open the screen with movie details
 
 ### Featured Tv Series

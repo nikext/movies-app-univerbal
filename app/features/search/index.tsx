@@ -1,4 +1,10 @@
-import React, { ReactNode, useRef, useState, useEffect } from 'react';
+import React, {
+  ReactNode,
+  useRef,
+  useState,
+  useEffect,
+  useCallback,
+} from 'react';
 import {
   StyleProp,
   StyleSheet,
@@ -14,6 +20,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import movieData from '../../../server/data/movies.json';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { debounce } from 'lodash';
 
 // Define your RootStackParamList
 type RootStackParamList = {
@@ -42,23 +49,36 @@ export function Search({ style }: SearchProps): ReactNode {
   const [filteredMovies, setFilteredMovies] = useState<Movie[]>([]);
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
 
   useEffect(() => {
     // Set movies from the imported JSON data
     setMovies(movieData.movies);
   }, []);
 
+  // Create a debounced search function
+  const debouncedSearch = useCallback(
+    debounce((text: string) => {
+      setDebouncedSearchTerm(text);
+    }, 300),
+    [],
+  );
+
   const handleSearch = (text: string) => {
     setInputValue(text);
-    if (text) {
+    debouncedSearch(text);
+  };
+
+  useEffect(() => {
+    if (debouncedSearchTerm) {
       const filtered = movies.filter((movie) =>
-        movie.title.toLowerCase().includes(text.toLowerCase()),
+        movie.title.toLowerCase().includes(debouncedSearchTerm.toLowerCase()),
       );
       setFilteredMovies(filtered);
     } else {
       setFilteredMovies([]);
     }
-  };
+  }, [debouncedSearchTerm, movies]);
 
   const handleSuggestionPress = (item: Movie) => {
     navigation.navigate('DetailScreen', { item });
@@ -111,7 +131,7 @@ export function Search({ style }: SearchProps): ReactNode {
         </View>
       </SafeAreaView>
 
-      {inputValue && (
+      {inputValue !== '' && (
         <View style={searchStyles.suggestionsWrapper}>
           <View style={searchStyles.suggestions}>{renderSuggestions()}</View>
         </View>
