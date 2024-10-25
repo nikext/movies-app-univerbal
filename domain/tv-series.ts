@@ -21,4 +21,5 @@ export type TVSeries = {
   genres: string[];
   rating: number;
   seasons: Season[];
+  posterUrl: string;
 };

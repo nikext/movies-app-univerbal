@@ -62,7 +62,7 @@
       "director": "Quentin Tarantino",
       "releaseYear": 1994,
       "genres": ["Crime", "Drama"],
-      "rating": 150
+      "rating": 87
     },
     {
       "id": "9",
@@ -142,7 +142,7 @@
       "director": "Steven Spielberg",
       "releaseYear": 1998,
       "genres": ["Drama", "War"],
-      "rating": 230
+      "rating": 88
     },
     {
       "id": "19",

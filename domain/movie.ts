@@ -8,4 +8,5 @@ export type Movie = {
   genres: string[];
   rating: number;
   runtimeMinutes: number;
+  posterUrl: string;
 };

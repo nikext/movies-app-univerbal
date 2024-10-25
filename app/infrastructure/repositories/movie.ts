@@ -50,18 +50,16 @@ export async function getFeaturedMoviesQuery(
 }
 
 export async function getTopRatedMoviesQuery(): Promise<Movie[]> {
-  // TODO: implement on backend side
   try {
     const url = new URL('/movies', apiUrl);
+    url.searchParams.set('rating_gte', '75');
     const request = await fetch(url);
     if (!request.ok) return [];
 
     const json = (await request.json()) as Movie[];
-
-    // top rated has to have a rating above 75%
-    return json.filter((it) => it.rating > 69);
+    return json;
   } catch (err) {
-    console.error(err);
+    console.error('Error fetching top rated movies:', err);
     return [];
   }
 }

@@ -1,23 +1,22 @@
-import { List } from '@/ui/list';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, FlatList } from 'react-native';
 import { useAtom } from 'jotai';
 import { loadable } from 'jotai/utils';
-import { useEffect, useState, type ReactNode } from 'react';
-import { Text, StyleSheet, ScrollView } from 'react-native';
 import { topRatedMovies$ } from './state';
 import { TVSeries } from 'domain/tv-series';
+import { Movie } from 'domain/movie';
 import { getTopRatedTvSeriesQuery } from '@/infrastructure/repositories/tv-series';
 import { Loader } from '@/ui/loader';
+import { MovieCard } from '@/ui/movie-card';
+import { TVSeriesCard } from '@/ui/tv-series-card';
 
-// Displays movies with rating above 75%
-export default function TopRatedScreen(): ReactNode {
+export default function TopRatedScreen() {
   const [topRatedMoviesLoadable] = useAtom(loadable(topRatedMovies$));
+  const [tvSeries, setTvSeries] = useState<TVSeries[]>([]);
 
-  const [tvSeres, set] = useState<TVSeries[]>([]);
-
-  // fetches data for tv series
   useEffect(() => {
     getTopRatedTvSeriesQuery().then((res) => {
-      set(res as TVSeries[]);
+      setTvSeries(res.filter((series) => series.rating >= 75));
     });
   }, []);
 
@@ -25,33 +24,69 @@ export default function TopRatedScreen(): ReactNode {
     return <Loader />;
   }
 
-  // error
   if (topRatedMoviesLoadable.state === 'hasError') {
-    return <Text>{JSON.stringify(topRatedMoviesLoadable.error)}</Text>;
+    return (
+      <Text style={styles.errorText}>
+        {JSON.stringify(topRatedMoviesLoadable.error)}
+      </Text>
+    );
   }
 
   if (topRatedMoviesLoadable.state === 'hasData') {
+    const filteredMovies = topRatedMoviesLoadable.data.filter(
+      (movie: Movie) => movie.rating >= 75,
+    );
     return (
-      <ScrollView style={styles.root}>
-        {/* movies */}
-        <Text style={styles.title}>Top rated movies</Text>
-        <List data={topRatedMoviesLoadable.data} style={{ marginBottom: 40 }} />
-
-        {/* tv series */}
-        <Text style={styles.title}>Top rated tv series</Text>
-        <List data={tvSeres} />
-      </ScrollView>
+      <View style={styles.container}>
+        <FlatList
+          ListHeaderComponent={
+            <>
+              <Text style={styles.title}>Top Rated Movies</Text>
+              <FlatList
+                data={filteredMovies}
+                renderItem={({ item }: { item: Movie }) => (
+                  <MovieCard movie={item} />
+                )}
+                keyExtractor={(item: Movie) => item.id.toString()}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                style={styles.list}
+              />
+              <Text style={styles.title}>Top Rated TV Series</Text>
+            </>
+          }
+          data={tvSeries}
+          renderItem={({ item }: { item: TVSeries }) => (
+            <TVSeriesCard tvSeries={item} />
+          )}
+          keyExtractor={(item: TVSeries) => item.id.toString()}
+          showsVerticalScrollIndicator={false}
+        />
+      </View>
     );
   }
+
+  return null;
 }
 
 const styles = StyleSheet.create({
-  root: {
-    display: 'flex',
-    flexDirection: 'column',
+  container: {
+    flex: 1,
+    backgroundColor: '#f0f0f0',
+    padding: 16,
   },
-
   title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 16,
+    marginTop: 24,
+  },
+  list: {
     marginBottom: 24,
+  },
+  errorText: {
+    color: 'red',
+    textAlign: 'center',
+    marginTop: 20,
   },
 });
