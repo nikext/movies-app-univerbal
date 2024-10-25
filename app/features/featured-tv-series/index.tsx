@@ -5,6 +5,7 @@ import {
   StyleSheet,
   FlatList,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import { useEffect, useState } from 'react';
 import { getFeaturedTvSeriesQuery } from '@/infrastructure/repositories/tv-series';
@@ -27,11 +28,22 @@ type TvSeriesPosterProps = {
 
 export function FeaturedTvSeries() {
   const [featuredTvSeries, setFeaturedTvSeries] = useState<TvSeries[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchFeaturedTvSeries = async () => {
-      const series = await getFeaturedTvSeriesQuery();
-      setFeaturedTvSeries(series);
+      try {
+        setIsLoading(true);
+        setError(null);
+        const series = await getFeaturedTvSeriesQuery();
+        setFeaturedTvSeries(series);
+      } catch (err) {
+        setError('Failed to fetch featured TV series. Please try again later.');
+        console.error('Error fetching featured TV series:', err);
+      } finally {
+        setIsLoading(false);
+      }
     };
     fetchFeaturedTvSeries();
   }, []);
@@ -40,6 +52,22 @@ export function FeaturedTvSeries() {
     // Handle poster press (e.g., navigate to details page)
     console.log('TV Series pressed:', tvSeries.title);
   };
+
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>{error}</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -161,5 +189,17 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 14,
     fontWeight: 'bold',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  errorContainer: {
+    padding: 16,
+  },
+  errorText: {
+    color: 'red',
+    textAlign: 'center',
   },
 });

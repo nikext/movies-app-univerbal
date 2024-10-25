@@ -32,8 +32,8 @@ Don't forget to give us access to the repository by either making it public or i
 
 - [x] Running `npm start` does not start the app due to errors in the console
 - [x] Bottom tab navigation does not display icons
-- [ ] The app is not styled - make it pretty
-- [ ] The console should not display any warning nor errors in general
+- [x] The app is not styled - make it pretty
+- [x] The console should not display any warning nor errors in general
 
 ## Home screen (tab-home)
 
@@ -62,12 +62,12 @@ Don't forget to give us access to the repository by either making it public or i
 
 ## Top rated screen (tab-top-rated)
 
-- [ ] The list should display items with ratings of >=75
-- [ ] Some list entries display incorrectly formatted values
+- [x] The list should display items with ratings of >=75
+- [x] Some list entries display incorrectly formatted values
 
 ## Favorites screen (tab-favorites)
 
-- [ ] The screen displays two headers - it should display only one
+- [x] The screen displays two headers - it should display only one
 - [ ] Implement the view
 
 ## Refactoring

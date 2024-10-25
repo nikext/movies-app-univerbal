@@ -44,10 +44,20 @@ export async function getFeaturedTvSeriesQuery(): Promise<TVSeries[]> {
   const url = new URL('/tv-series/recommended', apiUrl);
   console.log(url);
 
-  const request = await fetch(url);
-  if (!request.ok) return [];
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
 
-  return await request.json();
+    const request = await fetch(url, { signal: controller.signal });
+    clearTimeout(timeoutId);
+
+    if (!request.ok) throw new Error('Network response was not ok');
+
+    return await request.json();
+  } catch (error) {
+    console.error('Error fetching featured TV series:', error);
+    return [];
+  }
 }
 
 export async function getTopRatedTvSeriesQuery(): Promise<TVSeries[]> {
@@ -59,5 +69,5 @@ export async function getTopRatedTvSeriesQuery(): Promise<TVSeries[]> {
   const json: TVSeries[] = await request.json();
 
   // top rated has to have a rating above 75%
-  return json.filter((it) => it.rating > 60);
+  return json.filter((it) => it.rating > 75);
 }
